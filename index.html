@@ -126,6 +126,31 @@ input[type=number],select{width:100%;padding:9px 10px;border:1.5px solid var(--l
 .nxt{margin-top:12px;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:9px 18px;font-weight:600}
 .prog{color:var(--muted);font-size:.9rem}
 
+
+/* Registro final */
+.reg{margin-top:56px;background:#0e1c28;color:#fff;border-radius:16px;padding:30px;border-top:6px solid var(--amber);display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center}
+.reg h2{font-size:1.9rem}
+.reg p{color:#c6d3de;margin:10px 0 0}
+.reg ul{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:8px}
+.reg li{display:flex;gap:10px;align-items:center;background:#14293a;border:1px solid #274055;border-radius:8px;padding:9px 12px}
+.reg li i{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #4b6a82;display:grid;place-items:center;font-style:normal;font-size:.85rem}
+.reg li.ok i{background:var(--ok);border-color:var(--ok);color:#fff}
+.reg li.ok{border-color:var(--ok)}
+.reg .act{background:#14293a;border:1px solid #274055;border-radius:12px;padding:20px;text-align:center}
+.reg .act label{color:#c6d3de;text-align:left}
+.reg .act input{background:#0e1c28;color:#fff;border-color:#38566e;margin-bottom:14px}
+.go{display:block;width:100%;background:var(--amber);color:#14212d;font-family:var(--head);font-size:1.2rem;text-decoration:none;border-radius:10px;padding:14px 18px;font-weight:700;border:0}
+.go[aria-disabled=true]{background:#38566e;color:#9db0c0;pointer-events:none}
+.reg .hint{font-size:.85rem;color:#a9bccb;margin-top:10px;min-height:1.3em}
+.reg .alt{margin-top:10px;background:none;border:1px solid #38566e;color:#d9e5ee;border-radius:8px;padding:8px 14px;width:100%}
+.reg .alt:disabled{opacity:.4;cursor:not-allowed}
+#cert{display:none;color:#000;background:#fff;padding:40px;border:6px double #1a7fc1;text-align:center;font-family:var(--body)}
+#cert h1{font-size:2rem;margin:10px 0}
+#cert .nm{font-size:1.8rem;font-family:var(--head);border-bottom:2px solid #000;display:inline-block;padding:4px 30px;margin:16px 0}
+body.pc>*:not(#cert){display:none!important}
+body.pc #cert{display:block}
+@media (max-width:860px){.reg{grid-template-columns:1fr;padding:22px}}
+
 footer{margin:60px 0 0;background:#0e1c28;color:#b8c8d5;padding:26px 0;font-size:.9rem}
 dialog{border:0;padding:0;background:transparent;max-width:min(94vw,980px)}
 dialog::backdrop{background:rgba(0,0,0,.8)}
@@ -143,7 +168,7 @@ dialog button{display:block;margin:6px auto 0;background:var(--amber);border:0;b
   .bar{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-@media print{.top,.side,.hero .rollbox,.sec.quiz,.tabs{display:none}.step{break-inside:avoid}body{background:#fff}}
+@media print{.reg,.top,.side,.hero .rollbox,.sec.quiz,.tabs{display:none}.step{break-inside:avoid}body{background:#fff}}
 </style>
 </head>
 <body>
@@ -252,9 +277,36 @@ dialog button{display:block;margin:6px auto 0;background:var(--amber);border:0;b
     <p class="lead">Siete preguntas rápidas sobre el instructivo.</p>
     <div class="panel q" id="qbox"></div>
   </section>
+
+  <section class="reg" id="registro" aria-labelledby="rgt">
+    <div>
+      <h2 id="rgt">Terminaste la capacitación</h2>
+      <p>El último paso es registrar tu capacitación en el formulario oficial. Así queda constancia de que ya conoces el procedimiento de bobinado PR-GOP-01.</p>
+      <ul id="rchk"></ul>
+    </div>
+    <div class="act">
+      <label for="rname">Tu nombre (para tu constancia impresa)</label>
+      <input id="rname" type="text" autocomplete="name" placeholder="Nombre y apellido">
+      <a class="go" id="rgo" href="https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-disabled="true">Registrar mi capacitación</a>
+      <div class="hint" id="rhint"></div>
+      <button class="alt" id="rcert" disabled>Imprimir mi constancia</button>
+    </div>
+  </section>
 </main>
 
+
 <footer><div class="wrap">PR-GOP-01 · Instructivo de bobinado · Versión 020 · Aprobado 02/01/25 · AT Tecnología S.A.S. Material de apoyo basado en el documento oficial; ante cualquier diferencia, prima el documento aprobado.</div></footer>
+
+
+<div id="cert">
+  <img id="certlogo" alt="AT Tecnología" style="height:50px">
+  <h1>Constancia de capacitación</h1>
+  <p>Se registra que</p>
+  <div class="nm" id="cnm"></div>
+  <p>completó la capacitación del <b>Instructivo de bobinado PR-GOP-01</b> (versión 020)<br>para la máquina: <b id="cmq"></b></p>
+  <p>Evaluación: <b id="csc"></b> · Fecha: <b id="cdt"></b></p>
+  <p style="margin-top:50px">______________________________<br>Firma del supervisor</p>
+</div>
 
 <dialog id="dlg"><img id="dimg" alt=""><p id="dcap"></p><button id="dclose">Cerrar</button></dialog>
 
@@ -376,7 +428,32 @@ const $ = s => document.querySelector(s);
 function renderTabs(){
   $('#tabs').innerHTML = Object.entries(MACHINES).map(([k,m])=>
     `<button class="tab" role="tab" aria-selected="${k===current}" data-m="${k}"><strong>${m.name}</strong><span>${m.desc}</span></button>`).join('');
-  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ current=b.dataset.m; load(); renderTabs(); render(); });
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ current=b.dataset.m; 
+/* ====== Registro final ====== */
+const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header';
+let quiz = {done:false, score:0};
+try{ const s=JSON.parse(localStorage.getItem('bobinado-quiz')||'null'); if(s) quiz=s; }catch(e){}
+function updateReg(total,ok){
+  const stepsOk = total>0 && ok===total, quizOk = quiz.done;
+  const rows=[[stepsOk,'Pasos completados de '+MACHINES[current].name+': '+ok+' de '+total],[quizOk,quizOk?'Preguntas resueltas: '+quiz.score+' de '+Q.length:'Resolver las preguntas de verificación']];
+  $('#rchk').innerHTML=rows.map(r=>`<li class="${r[0]?'ok':''}"><i>${r[0]?'✓':''}</i>${r[1]}</li>`).join('');
+  const ready=stepsOk&&quizOk, go=$('#rgo');
+  go.setAttribute('aria-disabled',!ready); go.tabIndex=ready?0:-1;
+  $('#rhint').textContent=ready?'Se abre el formulario en una pestaña nueva.':'Se activa cuando completes los pasos y las preguntas.';
+  $('#rcert').disabled=!ready;
+}
+$('#rgo').addEventListener('click',e=>{ if($('#rgo').getAttribute('aria-disabled')==='true') e.preventDefault(); });
+$('#rcert').onclick=()=>{
+  $('#certlogo').src=IMG.logo;
+  $('#cnm').textContent=$('#rname').value.trim()||'______________________';
+  $('#cmq').textContent=MACHINES[current].name;
+  $('#csc').textContent=quiz.score+' de '+Q.length;
+  $('#cdt').textContent=new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'});
+  document.body.classList.add('pc'); window.print();
+};
+window.addEventListener('afterprint',()=>document.body.classList.remove('pc'));
+
+load(); renderTabs(); render(); });
 }
 
 function render(){
@@ -423,6 +500,7 @@ function update(){
   const pct = Math.round(ok/total*100);
   $('#pct').textContent = pct+'%'; $('#rollpct').textContent = pct+'%'; $('#barfill').style.width = pct+'%';
   $('#wound').setAttribute('r', 20 + 38*pct/100);
+  if(typeof updateReg==='function' && typeof quiz!=='undefined') updateReg(total,ok);
 }
 $('#reset').onclick=()=>{ if(confirm('¿Reiniciar los pasos marcados de esta máquina?')){ done={}; save(); render(); } };
 
@@ -489,6 +567,8 @@ let qi=0, score=0;
 function renderQ(){
   const b=$('#qbox');
   if(qi>=Q.length){
+    quiz={done:true,score:score}; try{localStorage.setItem('bobinado-quiz',JSON.stringify(quiz));}catch(e){}
+    update();
     b.innerHTML=`<h3>Resultado: ${score} de ${Q.length}</h3><p>${score===Q.length?'Excelente, dominas el instructivo.':score>=5?'Muy bien. Repasa los pasos que fallaste.':'Repasa el instructivo y vuelve a intentarlo.'}</p><button class="nxt" id="again">Intentar de nuevo</button>`;
     $('#again').onclick=()=>{qi=0;score=0;renderQ();}; return;
   }
