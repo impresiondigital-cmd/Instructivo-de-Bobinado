@@ -546,7 +546,7 @@ function renderQ(){
     const perfect = score===Q.length;
     b.innerHTML=`<h3>Resultado: ${score} de ${Q.length}</h3>`+
       (perfect ? `<p><b>¡Excelente! Sacaste ${Q.length} de ${Q.length}.</b></p>` : `<p>Repasa los pasos del instructivo en los que fallaste.</p>`)+
-      `<p>Ahora llena el formulario de registro de la capacitación.</p><a class="go" style="max-width:340px;text-align:center;margin-bottom:12px" href="${FORM_URL}" target="_blank" rel="noopener noreferrer">Llenar formulario</a>`+
+      `<p>Ahora llena el formulario de registro de la capacitación.</p><a class="go" style="max-width:340px;text-align:center;margin-bottom:12px" href="${https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header}" target="_blank" rel="noopener noreferrer">Llenar formulario</a>`+
       `<button class="nxt" id="again">${perfect?'Repetir evaluación':'Intentar de nuevo'}</button>`;
     $('#again').onclick=()=>{qi=0;score=0;quiz={done:false,score:0};update();renderQ();}; return;
   }
