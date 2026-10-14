@@ -280,16 +280,12 @@ dialog button{display:block;margin:6px auto 0;background:var(--amber);border:0;b
 
   <section class="reg" id="registro" aria-labelledby="rgt">
     <div>
-      <h2 id="rgt">Terminaste la capacitación</h2>
-      <p>Para registrar tu capacitación en el formulario oficial debes sacar 7 de 7 en la evaluación. Así queda constancia de que ya conoces el procedimiento de bobinado PR-GOP-01.</p>
-      <ul id="rchk"></ul>
+      <h2 id="rgt">Registro de capacitación</h2>
+      <p>Al terminar, llena el formulario para que quede registrada tu capacitación.</p>
     </div>
     <div class="act">
-      <label for="rname">Tu nombre (para tu constancia impresa)</label>
-      <input id="rname" type="text" autocomplete="name" placeholder="Nombre y apellido">
-      <a class="go" id="rgo" href="https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-disabled="true">Registrar mi capacitación</a>
+      <a class="go" id="rgo" href="https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-disabled="true">Llenar formulario</a>
       <div class="hint" id="rhint"></div>
-      <button class="alt" id="rcert" disabled>Imprimir mi constancia</button>
     </div>
   </section>
 </main>
@@ -298,15 +294,6 @@ dialog button{display:block;margin:6px auto 0;background:var(--amber);border:0;b
 <footer><div class="wrap">PR-GOP-01 · Instructivo de bobinado · Versión 020 · Aprobado 02/01/25 · AT Tecnología S.A.S. Material de apoyo basado en el documento oficial; ante cualquier diferencia, prima el documento aprobado.</div></footer>
 
 
-<div id="cert">
-  <img id="certlogo" alt="AT Tecnología" style="height:50px">
-  <h1>Constancia de capacitación</h1>
-  <p>Se registra que</p>
-  <div class="nm" id="cnm"></div>
-  <p>completó la capacitación del <b>Instructivo de bobinado PR-GOP-01</b> (versión 020)<br>para la máquina: <b id="cmq"></b></p>
-  <p>Evaluación: <b id="csc"></b> · Fecha: <b id="cdt"></b></p>
-  <p style="margin-top:50px">______________________________<br>Firma del supervisor</p>
-</div>
 
 <dialog id="dlg"><img id="dimg" alt=""><p id="dcap"></p><button id="dclose">Cerrar</button></dialog>
 
@@ -433,25 +420,11 @@ function renderTabs(){
 const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSdC-jUnlQasJi-GnbPw-Zx7ghSaTaMgqxCd3K7VMeAK7bIrHQ/viewform?usp=header';
 let quiz = {done:false, score:0};
 function updateReg(total,ok){
-  const quizOk = quiz.done && quiz.score===Q.length;
-  const rows=[[quizOk, quiz.done ? 'Evaluación: '+quiz.score+' de '+Q.length+(quizOk?'':' (necesitas '+Q.length+' de '+Q.length+')') : 'Sacar '+Q.length+' de '+Q.length+' en la evaluación'],
-              [total>0&&ok===total,'Pasos completados de '+MACHINES[current].name+': '+ok+' de '+total+' (recomendado)']];
-  $('#rchk').innerHTML=rows.map(r=>`<li class="${r[0]?'ok':''}"><i>${r[0]?'✓':''}</i>${r[1]}</li>`).join('');
-  const ready=quizOk, go=$('#rgo');
+  const ready = quiz.done && quiz.score===Q.length, go=$('#rgo');
   go.setAttribute('aria-disabled',!ready); go.tabIndex=ready?0:-1;
-  $('#rhint').textContent=ready?'Se abre el formulario en una pestaña nueva.':'Se activa cuando saques 7 de 7 en la evaluación.';
-  $('#rcert').disabled=!ready;
+  $('#rhint').textContent=ready?'Se abre en una pestaña nueva.':'Se activa cuando saques 7 de 7 en la evaluación.';
 }
 $('#rgo').addEventListener('click',e=>{ if($('#rgo').getAttribute('aria-disabled')==='true') e.preventDefault(); });
-$('#rcert').onclick=()=>{
-  $('#certlogo').src=IMG.logo;
-  $('#cnm').textContent=$('#rname').value.trim()||'______________________';
-  $('#cmq').textContent=MACHINES[current].name;
-  $('#csc').textContent=quiz.score+' de '+Q.length;
-  $('#cdt').textContent=new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'});
-  document.body.classList.add('pc'); window.print();
-};
-window.addEventListener('afterprint',()=>document.body.classList.remove('pc'));
 
 load(); renderTabs(); render(); });
 }
@@ -572,8 +545,8 @@ function renderQ(){
     const perfect = score===Q.length;
     b.innerHTML=`<h3>Resultado: ${score} de ${Q.length}</h3>`+
       (perfect
-        ? `<p><b>¡Excelente! Sacaste ${Q.length} de ${Q.length}.</b> Ya puedes registrar tu capacitación.</p><a class="go" style="max-width:340px;text-align:center" href="${FORM_URL}" target="_blank" rel="noopener noreferrer">Ir al formulario de registro</a>`
-        : `<p>Necesitas <b>${Q.length} de ${Q.length}</b> para registrar tu capacitación. Repasa los pasos del instructivo e inténtalo de nuevo.</p>`)+
+        ? `<p><b>¡Excelente! Sacaste ${Q.length} de ${Q.length}.</b> Ahora llena el formulario de registro.</p><a class="go" style="max-width:340px;text-align:center" href="${FORM_URL}" target="_blank" rel="noopener noreferrer">Llenar formulario</a>`
+        : `<p>Necesitas <b>${Q.length} de ${Q.length}</b> para llenar el formulario. Repasa los pasos del instructivo e inténtalo de nuevo.</p>`)+
       `<button class="nxt" id="again">${perfect?'Repetir evaluación':'Intentar de nuevo'}</button>`;
     $('#again').onclick=()=>{qi=0;score=0;quiz={done:false,score:0};update();renderQ();}; return;
   }
